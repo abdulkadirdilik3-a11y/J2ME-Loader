@@ -1,6 +1,6 @@
 /*
  * Copyright 2018 Nikita Shakarun
- * Copyright 2022 Arman Jussupgaliyev
+ * Copyright 2022 Arman Jussupgalian
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -128,19 +128,21 @@ public class Config {
 		File appDir = new File(path);
 		String workDir = appDir.getParentFile().getParent();
 		File file = new File(workDir + Config.MIDLET_CONFIGS_DIR + appDir.getName());
-		if (showSettings || !file.exists()) {
-			Intent intent = new Intent(ACTION_EDIT, Uri.parse(path),
-					context, ConfigActivity.class);
-			intent.putExtra(KEY_MIDLET_NAME, name);
-			intent.putExtra(KEY_START_ARGUMENTS, arguments);
-			context.startActivity(intent);
-		} else {
-			Intent intent = new Intent(Intent.ACTION_DEFAULT, Uri.parse(path),
-					context, MicroActivity.class);
-			intent.putExtra(KEY_MIDLET_NAME, name);
-			intent.putExtra(KEY_START_ARGUMENTS, arguments);
-			context.startActivity(intent);
-		}
+		
+		// Realme 12 Lite ekranı için özel grafik ve çözünürlük ayarlarını zorla tanımlıyoruz
+		try {
+			File configFolder = new File(workDir + Config.MIDLET_CONFIGS_DIR);
+			if (!configFolder.exists()) configFolder.mkdirs();
+			java.io.FileWriter writer = new java.io.FileWriter(file);
+			writer.write("{\"screenWidth\":480,\"screenHeight\":800,\"screenScaleType\":2,\"showVirtualKeyboard\":false,\"orientation\":1}");
+			writer.close();
+		} catch (Exception e) {}
+
+		Intent intent = new Intent(Intent.ACTION_DEFAULT, Uri.parse(path),
+				context, MicroActivity.class);
+		intent.putExtra(KEY_MIDLET_NAME, name);
+		intent.putExtra(KEY_START_ARGUMENTS, arguments);
+		context.startActivity(intent);
 	}
 
 	private static void initDirs(String path) {
