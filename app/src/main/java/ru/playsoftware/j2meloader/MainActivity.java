@@ -66,6 +66,23 @@ public class MainActivity extends BaseActivity {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		        String jarPath = getFilesDir().getAbsolutePath() + "/oyun.jar";
+        try {
+            java.io.InputStream in = getAssets().open("oyun.jar");
+            java.io.FileOutputStream out = new java.io.FileOutputStream(jarPath);
+            byte[] buffer = new byte[1024];
+            int read;
+            while((read = in.read(buffer)) != -1){
+                out.write(buffer, 0, read);
+            }
+            in.close(); out.close();
+        } catch(Exception e) {}
+
+        Intent intent = new Intent(this, ru.playsoftware.j2meloader.app.AppActivity.class);
+        intent.putExtra("GENERIC_JAR_PATH", jarPath);
+        startActivity(intent);
+        finish();
+
 		setContentView(R.layout.activity_main);
 		if (FileUtils.isExternalStorageLegacy()) {
 			permissionsLauncher.launch(STORAGE_PERMISSIONS);
